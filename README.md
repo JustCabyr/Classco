@@ -31,20 +31,14 @@
 
 To use application the database is seeding with users :
 
-* Administrator : email = admin@la.fr, password = admin
-* Redactor : email = redac@la.fr, password = redac
-* User : email = walker@la.fr, password = walker
-* User : email = slacker@la.fr, password = slacker
+* Administrator : email = admin@admin.com, password = password
+* User : email = user@user.com, password = password
 
 ### Tests ###
 
 When you want to launch the tests refresh and populate the database :
 
 `php artisan migrate:fresh --seed`
-
-You must have default settings and **en** language. You must also add provider in **config/app.php**.
-
-You can then use Dusk.
 
 ### License ###
 
