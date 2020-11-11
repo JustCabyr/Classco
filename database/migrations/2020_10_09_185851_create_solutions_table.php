@@ -18,7 +18,6 @@ class CreateSolutionsTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('assignment_course_code');
-            $table->foreign('assignment_course_code')->references('course_code')->on('assignments');
             $table->string('email');
             $table->string('content');
             $table->string('snapshot');
