@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Solution;
 use App\Models\Assignment;
+use JD\Cloudder\Facades\Cloudder;
 
 class SolutionsController extends Controller
 {
@@ -50,28 +51,36 @@ class SolutionsController extends Controller
             ]
         );
         
-        $solution = new Solution();
-        $solution->first_name = $request->input('first_name');
-        $solution->last_name = $request->input('last_name');
-        $solution->assignment_course_code = $request->input('assignment_course_code');
-        $solution->email = $request->input('email');
-        $solution->content = $request->input('content');
-        $solution->user_id = Auth::id();
         
-        if ($request->file('snapshot')) {
+        if ($request->hasFile('snapshot')) {
             $image = $request->file('snapshot');
-          
-            $ext = $image->getClientOriginalExtension();
-            $name = $image->getClientOriginalName();
+            
+            $image_path = $request->file('snapshot')->getRealPath();
+            Cloudder::upload($image_path, null, array("folder" => "classco", "overwrite" => TRUE, "resource_type" => "image"));
+            // Cloudder::upload($request->file('snapshot'));
+            $cloundary_upload = Cloudder::getResult();
+            
+            $solution = new Solution();
+            $solution->first_name = $request->input('first_name');
+            $solution->last_name = $request->input('last_name');
+            $solution->assignment_course_code = $request->input('assignment_course_code');
+            $solution->email = $request->input('email');
+            $solution->content = $request->input('content');
+            $solution->user_id = Auth::id();
+            $solution->snapshot = $cloundary_upload['url'];
 
-            $destinationPath = public_path('/snapshots');
-            $imagePath = $destinationPath.  $name.'.'.$ext;
+            $solution->save();
+
+            // $ext = $image->getClientOriginalExtension();
+            // $name = $image->getClientOriginalName();
+
+            // $destinationPath = public_path('/snapshots');
+            // $imagePath = $destinationPath.  $name.'.'.$ext;
             // dd($imagePath);
             // $image->move($destinationPath, $name);
-            $solution->snapshot = $imagePath;
+            // $solution->snapshot = $imagePath;
 
         }
-        $solution->save();
         
         return redirect('/home')->with('success', 'Solution submitted succesfully');
     }
